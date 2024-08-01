@@ -370,8 +370,8 @@ class GameController {
                 );
         });
 
-        randomIngredient = this.getRandomIngredients();
-        randomIngredient.forEach((ingredient, index) => {
+        this.randomIngredient = this.getRandomIngredients();
+        this.randomIngredient.forEach((ingredient, index) => {
             this.rootElement
                 .find(".game-tap-element")
                 .eq(index)
@@ -468,59 +468,63 @@ class GameController {
     }
 
     handleTapIngredient(ingredient) {
-        let currentRecipe = recipes.find(
-            (e) => e.name == this.currentRecipe.name
-        );
-        let currentIngredientIndex = currentRecipe.ingredients.findIndex(
-            (e) => e == ingredient
-        );
-        if (currentIngredientIndex !== -1) {
-            if (
-                this.currentRecipe.ingredientsClicks[currentIngredientIndex] <
-                this.clickTabCount
-            ) {
-                this.currentRecipe.ingredientsClicks[currentIngredientIndex]++;
-                this.balance++;
-                this.levelPoint++;
-                const endpoint = "/api/game-controll";
-                const url = `${baseUrl}${endpoint}`;
-
-                const data = {
-                    user_id: this.currentUser.id,
-                    balance: this.balance,
-                    level_point: this.levelPoint,
-                    current_recipe: this.currentRecipe.name,
-                    is_collected: 1,
-                    ingredients_clicks:
-                        this.currentRecipe.ingredientsClicks.join(","),
-                    last_crafted_time: this.lastCraftTime,
-                };
-                $.ajax({
-                    url: url,
-                    type: "post",
-                    data: data,
-                    success: function (resp) {},
-                });
-
+        if(this.leftTime < 0){
+            let currentRecipe = recipes.find(
+                (e) => e.name == this.currentRecipe.name
+            );
+            let currentIngredientIndex = currentRecipe.ingredients.findIndex(
+                (e) => e == ingredient
+            );
+            if (currentIngredientIndex !== -1) {
                 if (
-                    this.currentRecipe.ingredientsClicks[
-                        currentIngredientIndex
-                    ] == this.clickTabCount
+                    this.currentRecipe.ingredientsClicks[currentIngredientIndex] <
+                    this.clickTabCount
                 ) {
-                    if (this.checkAvailableCraft) {
-                        this.stopIntervalFuntion();
-                        this.showCraftButton();
-                    } else if (this.checkRefreshValidate())
-                        this.refreshTabIngredients();
+                    this.currentRecipe.ingredientsClicks[currentIngredientIndex]++;
+                    this.balance++;
+                    this.levelPoint++;
+                    const endpoint = "/api/game-controll";
+                    const url = `${baseUrl}${endpoint}`;
+    
+                    const data = {
+                        user_id: this.currentUser.id,
+                        balance: this.balance,
+                        level_point: this.levelPoint,
+                        current_recipe: this.currentRecipe.name,
+                        is_collected: 1,
+                        ingredients_clicks:
+                            this.currentRecipe.ingredientsClicks.join(","),
+                        last_crafted_time: this.lastCraftTime,
+                    };
+                    $.ajax({
+                        url: url,
+                        type: "post",
+                        data: data,
+                        success: function (resp) {},
+                    });
+    
+                    if (
+                        this.currentRecipe.ingredientsClicks[
+                            currentIngredientIndex
+                        ] == this.clickTabCount
+                    ) {
+                        console.log("one is full!");
+                        let isShowCraftButton = this.checkAvailableCraft();
+                        if (isShowCraftButton) {
+                            this.stopIntervalFuntion();
+                            this.showCraftButton();
+                        } else if (this.checkRefreshValidate())
+                            this.refreshTabIngredients();
+                    }
+                } else {
+                    console.log("clicked full ingredient");
                 }
             } else {
-                console.log("clicked full ingredient");
+                console.log("clicked wrong ingredient");
             }
-        } else {
-            console.log("clicked wrong ingredient");
+    
+            this.updateView();
         }
-
-        this.updateView();
     }
     handleCraftButton() {
         let now = new Date();
@@ -624,6 +628,7 @@ class GameController {
         let currentRecipe = recipes.find(
             (e) => e.name == this.currentRecipe.name
         );
+        console.log(this.randomIngredient);
         this.randomIngredient.forEach((ingredient) => {
             let currentIngredientIndex = currentRecipe.ingredients.findIndex(
                 (e) => e == ingredient.name

@@ -250,19 +250,19 @@
 </body>
 <script src="{{ mix('js/app.js') }}"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // Telegram.WebApp.ready();
-    // const tgWebApp = window.Telegram?.WebApp;
-    // const telegramUser = tgWebApp?.initDataUnsafe?.user;
-    const telegramUser = {
-        "id": 6469354442,
-        "first_name": "LiLu",
-        "last_name": "Test",
-        "username": "lilujang1",
-        "language_code": "en",
-        "allows_write_to_pm": true
-    }
+    Telegram.WebApp.ready();
+    const tgWebApp = window.Telegram?.WebApp;
+    const telegramUser = tgWebApp?.initDataUnsafe?.user;
+    //const telegramUser = {
+    //    "id": 6469354442,
+    //    "first_name": "LiLu",
+    //    "last_name": "Test",
+    //    "username": "lilujang1",
+    //    "language_code": "en",
+    //    "allows_write_to_pm": true
+    ///}
     console.log(telegramUser)
     // var gameData = {
     //     balance: 300,
@@ -288,6 +288,7 @@
     // }
 
     var gameController;
+    var baseUrl = window.location.origin;
 
     $(document).ready(function () {
         initUser();
@@ -295,7 +296,7 @@
 
     function initUser() {
         $.ajax({
-            url: "{{ route('init-user') }}",
+            url: `${baseUrl}/api/init-user`,
             type: "post",
             data: telegramUser,
             success: function (resp) {

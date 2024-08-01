@@ -22,6 +22,7 @@ class CreateGameStatusesTable extends Migration
             $table->string('ingredients_clicks')->default('0,0,0,0,0');
             $table->boolean('is_collected')->default(true);
             $table->dateTime("last_crafted_time");
+            $table->timestamps();
         });
     }
 
