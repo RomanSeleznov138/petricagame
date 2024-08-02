@@ -305,7 +305,8 @@ class GameController {
     isCrafted;
     currentUser;
     randomIngredient;
-    intervalFuntion;
+    intervalTimerFuntion;
+    sendDataTimeout;
     time;
     leftTime;
 
@@ -398,14 +399,14 @@ class GameController {
             if (this.isCollected) {
                 if (this.checkAvailableCraft()) this.showCraftButton();
                 else
-                    this.intervalFuntion = setInterval(() => {
+                    this.intervalTimerFuntion = setInterval(() => {
                         this.showRefreshTimer();
                     }, 1000);
             } else {
                 this.showCollectButton();
             }
         } else {
-            this.intervalFuntion = setInterval(() => {
+            this.intervalTimerFuntion = setInterval(() => {
                 this.showTimeToPlay(this.leftTime);
             }, 1000);
         }
@@ -461,14 +462,16 @@ class GameController {
         });
 
         this.rootElement.find("#InventoryTab .backBtn").off("click");
-        this.rootElement.find("#InventoryTab .backBtn").on("click", (element) => {
-            console.log("Back button clicked");
-            this.showHome();
-        });
+        this.rootElement
+            .find("#InventoryTab .backBtn")
+            .on("click", (element) => {
+                console.log("Back button clicked");
+                this.showHome();
+            });
     }
 
     handleTapIngredient(ingredient) {
-        if(this.leftTime < 0){
+        if (this.leftTime < 0) {
             let currentRecipe = recipes.find(
                 (e) => e.name == this.currentRecipe.name
             );
@@ -477,32 +480,23 @@ class GameController {
             );
             if (currentIngredientIndex !== -1) {
                 if (
-                    this.currentRecipe.ingredientsClicks[currentIngredientIndex] <
-                    this.clickTabCount
+                    this.currentRecipe.ingredientsClicks[
+                        currentIngredientIndex
+                    ] < this.clickTabCount
                 ) {
-                    this.currentRecipe.ingredientsClicks[currentIngredientIndex]++;
+
+                    clearTimeout(this.sendDataTimeout);
+
+                    this.currentRecipe.ingredientsClicks[
+                        currentIngredientIndex
+                    ]++;
                     this.balance++;
                     this.levelPoint++;
-                    const endpoint = "/api/game-controll";
-                    const url = `${baseUrl}${endpoint}`;
-    
-                    const data = {
-                        user_id: this.currentUser.id,
-                        balance: this.balance,
-                        level_point: this.levelPoint,
-                        current_recipe: this.currentRecipe.name,
-                        is_collected: 1,
-                        ingredients_clicks:
-                            this.currentRecipe.ingredientsClicks.join(","),
-                        last_crafted_time: this.lastCraftTime,
-                    };
-                    $.ajax({
-                        url: url,
-                        type: "post",
-                        data: data,
-                        success: function (resp) {},
-                    });
-    
+
+                    this.sendDataTimeout = setTimeout(() => {
+                        this.sendData();
+                    }, 500);
+
                     if (
                         this.currentRecipe.ingredientsClicks[
                             currentIngredientIndex
@@ -522,7 +516,7 @@ class GameController {
             } else {
                 console.log("clicked wrong ingredient");
             }
-    
+
             this.updateView();
         }
     }
@@ -592,7 +586,7 @@ class GameController {
             data: data,
             success: function (resp) {},
         });
-        
+
         this.initGame();
     }
     showInventory() {
@@ -614,7 +608,7 @@ class GameController {
                 .eq(index)
                 .find(".inventoryInfo")
                 .find(".invenvtoryNumber")
-                .text("×"+this.inventory[inventory.name]);
+                .text("×" + this.inventory[inventory.name]);
         });
         this.rootElement.find("#GameTab").css("display", "none");
         this.rootElement.find("#InventoryTab").css("display", "block");
@@ -658,22 +652,46 @@ class GameController {
         return isValid;
     }
     showCraftButton() {
-        this.rootElement.find(".game-tap-description .refreshTimer").css("display", "none");
-        this.rootElement.find(".game-tap-description .waitingTimer").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "block");
+        this.rootElement
+            .find(".game-tap-description .refreshTimer")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .waitingTimer")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-collect-button")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-craft-button")
+            .css("display", "block");
     }
     showCollectButton() {
-        this.rootElement.find(".game-tap-description .refreshTimer").css("display", "none");
-        this.rootElement.find(".game-tap-description .waitingTimer").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "block");
+        this.rootElement
+            .find(".game-tap-description .refreshTimer")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .waitingTimer")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-craft-button")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-collect-button")
+            .css("display", "block");
     }
     showRefreshTimer() {
-        this.rootElement.find(".game-tap-description .refreshTimer").css("display", "block");
-        this.rootElement.find(".game-tap-description .waitingTimer").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .refreshTimer")
+            .css("display", "block");
+        this.rootElement
+            .find(".game-tap-description .waitingTimer")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-craft-button")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-collect-button")
+            .css("display", "none");
         if (this.time >= 10)
             this.rootElement
                 .find(".game-tap-description")
@@ -699,11 +717,19 @@ class GameController {
         const mDisplay = m > 0 ? String(m).padStart(2, "0") : "00";
         const sDisplay = s > 0 ? String(s).padStart(2, "0") : "00";
 
-        this.rootElement.find(".game-tap-description .refreshTimer").css("display", "none");
-        this.rootElement.find(".game-tap-description .waitingTimer").css("display", "block");
-        this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "none");
-        this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "none");
-    
+        this.rootElement
+            .find(".game-tap-description .refreshTimer")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .waitingTimer")
+            .css("display", "block");
+        this.rootElement
+            .find(".game-tap-description .game-tap-craft-button")
+            .css("display", "none");
+        this.rootElement
+            .find(".game-tap-description .game-tap-collect-button")
+            .css("display", "none");
+
         this.rootElement
             .find(".game-tap-description")
             .find(".waitingTimer")
@@ -732,7 +758,7 @@ class GameController {
         this.time = 30;
     }
     stopIntervalFuntion() {
-        clearInterval(this.intervalFuntion);
+        clearInterval(this.intervalTimerFuntion);
     }
 
     updateView() {
@@ -820,6 +846,29 @@ class GameController {
         randomizedSelection.sort(() => Math.random() - 0.5);
 
         return randomizedSelection;
+    }
+
+    sendData() {
+        console.log("send data function called");
+        const endpoint = "/api/game-controll";
+        const url = `${baseUrl}${endpoint}`;
+        const data = {
+            user_id: this.currentUser.id,
+            balance: this.balance,
+            level_point: this.levelPoint,
+            current_recipe: this.currentRecipe.name,
+            is_collected: 1,
+            ingredients_clicks: this.currentRecipe.ingredientsClicks.join(","),
+            last_crafted_time: this.lastCraftTime,
+        };
+        $.ajax({
+            url: url,
+            type: "post",
+            data: data,
+            success: function (resp) {
+                console.log("success");
+            },
+        });
     }
 }
 
