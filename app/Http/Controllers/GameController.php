@@ -37,8 +37,8 @@ class GameController extends Controller
                 ['count'=>DB::raw('count+1')]
             );
         }
-        // return response([
-        //     'gameStatus' => $gameStatus,
-        // ], 200);
+        return response([
+            'gameStatus' => $gameStatus,
+        ], 200);
     }
 }
