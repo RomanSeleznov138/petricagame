@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IngredientClicks;
 use App\Models\TelegramUser;
 use App\Models\GameStatus;
 use App\Models\Inventories;
@@ -31,30 +32,25 @@ class UserController extends Controller
                     'balance' => 0,
                     'level_point' => 0,
                     'current_recipe' => 'Moonlight Elixir',
-                    'ingredients_clicks' => '0,0,0,0,0',
                     'is_collected' => true,
                     'last_crafted_time' => $formattedDate
                 ]
             );
-            $inventories = Inventories::firstOrCreate(
-                ['user_id' => $currentUser->id],
-                [
-                    'Moonlight Elixir' => 0,
-                    'Shadowfire Brew' => 0,
-                    'Starfall Salad' => 0,
-                    'Bloodmoon Infusion' => 0,
-                    'Frostfire Tea' => 0,
-                    'Twilight Tonic' => 0,
-                    'Sunfire Elixir' => 0,
-                    'Whisperwind Potion' => 0,
-                    'Celestial Brew' => 0,
-                    'Astral Essence' => 0,
-                ]
-            );
+            $ingredient_clicks = IngredientClicks::where('user_id', $currentUser->id)
+                ->select('ingredient_index', 'clicks')
+                ->get()
+                ->map(function ($item) {
+                    return $item->clicks;
+                })
+                ->toArray();
+            $inventories = Inventories::where('user_id', $currentUser->id)
+                ->select('recipe_name', 'count')
+                ->get();
         }
         return response([
             'user' => $currentUser,
             'gameStatus' => $gameStatus,
+            'ingredient_clicks' => $ingredient_clicks,
             'inventories' => $inventories
         ], 200);
     }

@@ -19,7 +19,6 @@ class CreateGameStatusesTable extends Migration
             $table->integer('balance')->default(0);
             $table->integer('level_point')->default(0);
             $table->string('current_recipe');
-            $table->string('ingredients_clicks')->default('0,0,0,0,0');
             $table->boolean('is_collected')->default(true);
             $table->dateTime("last_crafted_time");
             $table->timestamps();

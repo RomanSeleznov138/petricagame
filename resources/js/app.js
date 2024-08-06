@@ -277,21 +277,21 @@ var recipes = [
 ];
 
 var levels = [
-    0, 500, 1500, 3000, 5000, 7500, 10500, 14000, 18000, 22500, 27500,
+    0, 5000, 25000, 125000, 1000000, 2000000, 10000000, 50000000, 250000000,
+    1000000000,
 ];
 
 var levelName = [
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
-    "Novice",
+    "Novice Hero",
+    "Bold Warrior",
+    "Valiant Champion ",
+    "Resilient Knight",
+    "Heroic Vanguard",
+    "Epic Conqueror",
+    "Legendary Defender",
+    "Mythic Guardian",
+    "Supreme Paladin",
+    "Eternal Crusader",
 ];
 
 const baseUrl = window.location.origin; // Gets the current origin (scheme + hostname + port)
@@ -307,6 +307,7 @@ class GameController {
     randomIngredient;
     intervalTimerFuntion;
     sendDataTimeout;
+    showWarningTimer;
     time;
     leftTime;
 
@@ -348,6 +349,12 @@ class GameController {
             (e) => e.name == this.currentRecipe.name
         );
         currentRecipe.ingredients.forEach((ingredient, index) => {
+            if (
+                typeof this.currentRecipe.ingredientsClicks[index] ==
+                "undefined"
+            ) {
+                this.currentRecipe.ingredientsClicks[index] = 0;
+            }
             let currentIngredient = ingredients.find(
                 (e) => e.name == ingredient
             );
@@ -367,7 +374,11 @@ class GameController {
                 .find(".game-ingredient-item-level-percent")
                 .css(
                     "width",
-                    `${this.currentRecipe.ingredientsClicks[index]}%`
+                    `${
+                        this.currentRecipe.ingredientsClicks[index]
+                            ? this.currentRecipe.ingredientsClicks[index]
+                            : 0
+                    }%`
                 );
         });
 
@@ -412,6 +423,7 @@ class GameController {
         }
 
         this.addEventListeners();
+        this.checkRefreshValidate();
     }
     leftTimeToPlay() {
         const last_crafted_time = new Date(this.lastCraftTime);
@@ -484,7 +496,7 @@ class GameController {
                         currentIngredientIndex
                     ] < this.clickTabCount
                 ) {
-
+                    this.showFlyNumber(ingredient);
                     clearTimeout(this.sendDataTimeout);
 
                     this.currentRecipe.ingredientsClicks[
@@ -511,9 +523,13 @@ class GameController {
                             this.refreshTabIngredients();
                     }
                 } else {
+                    clearTimeout(this.showWarningTimer);
+                    this.showWarning();
                     console.log("clicked full ingredient");
                 }
             } else {
+                clearTimeout(this.showWarningTimer);
+                this.showWarning();
                 console.log("clicked wrong ingredient");
             }
 
@@ -571,13 +587,23 @@ class GameController {
             level_point: this.levelPoint,
             is_collected: 1,
             current_recipe: currentRecipe,
-            ingredients_clicks: "0,0,0,0,0",
+            ingredients_clicks: [0, 0, 0, 0, 0],
             last_crafted_time: this.lastCraftTime,
             completedRecipe: completedRecipe,
         };
         this.currentRecipe.name = currentRecipe;
         this.isCollected = 1;
-        this.inventory[completedRecipe]++;
+        const recipeToUpdate = this.inventory.find(
+            (recipe) => recipe.recipe_name === completedRecipe
+        );
+
+        if (recipeToUpdate) recipeToUpdate.count++;
+        else {
+            this.inventory.push({
+                recipe_name: completedRecipe,
+                count: 1,
+            });
+        }
         const endpoint = "/api/game-controll";
         const url = `${baseUrl}${endpoint}`;
         $.ajax({
@@ -587,11 +613,10 @@ class GameController {
             success: function (resp) {},
         });
 
-        this.initGame();
+        // this.initGame();
     }
     showInventory() {
         recipes.forEach((inventory, index) => {
-            console.log(inventory.image);
             this.rootElement
                 .find(".invenvtoryElement")
                 .eq(index)
@@ -603,12 +628,13 @@ class GameController {
                 .find(".inventoryInfo")
                 .find(".invenvtoryTitle")
                 .text(inventory.name);
-            this.rootElement
-                .find(".invenvtoryElement")
-                .eq(index)
-                .find(".inventoryInfo")
-                .find(".invenvtoryNumber")
-                .text("×" + this.inventory[inventory.name]);
+            if (this.inventory[index])
+                this.rootElement
+                    .find(".invenvtoryElement")
+                    .eq(index)
+                    .find(".inventoryInfo")
+                    .find(".invenvtoryNumber")
+                    .text("×" + this.inventory[index].count);
         });
         this.rootElement.find("#GameTab").css("display", "none");
         this.rootElement.find("#InventoryTab").css("display", "block");
@@ -622,11 +648,11 @@ class GameController {
         let currentRecipe = recipes.find(
             (e) => e.name == this.currentRecipe.name
         );
-        console.log(this.randomIngredient);
         this.randomIngredient.forEach((ingredient) => {
             let currentIngredientIndex = currentRecipe.ingredients.findIndex(
                 (e) => e == ingredient.name
             );
+
             if (currentIngredientIndex !== -1) {
                 if (
                     this.currentRecipe.ingredientsClicks[
@@ -636,7 +662,8 @@ class GameController {
                     notClickable = false;
             }
         });
-        return !notClickable;
+
+        return notClickable;
     }
     checkAvailableCraft() {
         let isValid = true;
@@ -707,6 +734,13 @@ class GameController {
             this.refreshTabIngredients();
         }
     }
+    showWarning() {
+        this.rootElement.find(".warning").fadeIn(500); // Fade in over 500 milliseconds
+
+        this.showWarningTimer = setTimeout(() => {
+            this.rootElement.find(".warning").fadeOut(700); // Fade out over 500 milliseconds
+        }, 500);
+    }
     showTimeToPlay(seconds) {
         seconds = Number(seconds);
         const h = Math.floor(seconds / 3600);
@@ -740,6 +774,35 @@ class GameController {
             this.stopIntervalFuntion();
             this.initGame();
         }
+    }
+    showFlyNumber(ingredient) {
+        const div = this.rootElement.find(
+            `.game-tap-element[ingredient="${ingredient}"]`
+        )[0];
+        const numberElement = document.createElement("div");
+        numberElement.textContent = "+1";
+        numberElement.classList.add("fly-number");
+        document.body.appendChild(numberElement);
+
+        const divRect = div.getBoundingClientRect();
+        console.log(divRect);
+        
+        numberElement.style.position = "absolute"; // Ensure the position is absolute
+        numberElement.style.left = `${divRect.left + divRect.width / 2}px`;
+        numberElement.style.top = `${divRect.top}px`;
+
+        numberElement.offsetHeight; 
+
+        setTimeout(() => {
+            numberElement.style.left = `${divRect.left + divRect.width / 2+10}px`;
+            numberElement.style.top = `${divRect.top - 100}px`; // Move 100px up
+            numberElement.style.opacity = "0";
+            numberElement.style.fontSize = "10px";
+        }, 0);
+
+        setTimeout(() => {
+            numberElement.remove();
+        }, 1000); 
     }
     refreshTabIngredients() {
         this.randomIngredient = this.getRandomIngredients();
@@ -849,7 +912,6 @@ class GameController {
     }
 
     sendData() {
-        console.log("send data function called");
         const endpoint = "/api/game-controll";
         const url = `${baseUrl}${endpoint}`;
         const data = {
@@ -858,7 +920,7 @@ class GameController {
             level_point: this.levelPoint,
             current_recipe: this.currentRecipe.name,
             is_collected: 1,
-            ingredients_clicks: this.currentRecipe.ingredientsClicks.join(","),
+            ingredients_clicks: this.currentRecipe.ingredientsClicks,
             last_crafted_time: this.lastCraftTime,
         };
         $.ajax({

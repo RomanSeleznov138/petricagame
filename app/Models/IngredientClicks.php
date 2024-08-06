@@ -5,15 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GameStatus extends Model
+class IngredientClicks extends Model
 {
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'balance',
-        'level_point',
-        'current_recipe',
-        'is_collected',
-        'last_crafted_time',
+        'ingredient_index',
+        'clicks'
     ];
 }

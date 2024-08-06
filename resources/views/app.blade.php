@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="tabs">
-            <div class="tab" id="GameTab" >
+            <div class="tab" id="GameTab">
                 <div class="game-second-row">
                     <div class="game-user-balance">
                         <img src="images/coin.png" alt="" class="game-user-balance-coin">
@@ -96,6 +96,7 @@
                     </div>
                 </div>
                 <div class="game-tap-wrapper">
+                    <div class="warning"></div>
                     <div class="game-tap-description">
                         <div class="refreshTimer"></div>
                         <div class="waitingTimer"></div>
@@ -253,39 +254,21 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     Telegram.WebApp.ready();
-    const tgWebApp = window.Telegram?.WebApp;
-    const telegramUser = tgWebApp?.initDataUnsafe?.user;
-    //const telegramUser = {
-    //    "id": 6469354442,
-    //    "first_name": "LiLu",
-    //    "last_name": "Test",
-    //    "username": "lilujang1",
-    //    "language_code": "en",
-    //    "allows_write_to_pm": true
-    ///}
-    console.log(telegramUser)
-    // var gameData = {
-    //     balance: 300,
-    //     levelPoint: 300,
-    //     inventory: [
-    //         "Moonlight Elixir"
-    //     ],
-    //     currentRecipe: {
-    //         name: "Shadowfire Brew",
-    //         ingredientsClicks: [10, 20, 0, 0, 0]
-    //     },
-    //     lastCraftTime: new Date(),
-    //     isCollected: true,
-    //     currentUser: {
-    //         id: 1,
-    //         t_user_id: 6469354442,
-    //         first_name: "LiLu",
-    //         last_name: "Test",
-    //         username: "lilujang1",
-    //         created_at: "2024-07-24T00:59:10.000000Z",
-    //         updated_at: "2024-07-24T01:00:40.000000Z"
-    //     }
-    // }
+    let telegramUser = [];
+    if (window.location.host == "localhost:8000") {
+        telegramUser = {
+            "id": 6469354442,
+            "first_name": "LiLu",
+            "last_name": "Test",
+            "username": "lilujang1",
+            "language_code": "en",
+            "allows_write_to_pm": true
+        }
+    }
+    else {
+        const tgWebApp = window.Telegram?.WebApp;
+        telegramUser = tgWebApp?.initDataUnsafe?.user;
+    }
 
     var gameController;
     var baseUrl = window.location.origin;
@@ -303,17 +286,14 @@
                 var gameData = {
                     balance: resp.gameStatus.balance,
                     levelPoint: resp.gameStatus.level_point,
-                    inventory: [
-                        "Moonlight Elixir"
-                    ],
                     currentRecipe: {
                         name: resp.gameStatus.current_recipe,
-                        ingredientsClicks: resp.gameStatus.ingredients_clicks.split(',').map(Number)
+                        ingredientsClicks: resp.ingredient_clicks
                     },
-                    lastCraftTime:resp.gameStatus.last_crafted_time,
+                    lastCraftTime: resp.gameStatus.last_crafted_time,
                     isCollected: resp.gameStatus.is_collected,
                     currentUser: resp.user,
-                    inventory:resp.inventories
+                    inventory: resp.inventories
                 };
                 if (window.GameController)
                     gameController = new GameController(gameData, $('.game-container'));

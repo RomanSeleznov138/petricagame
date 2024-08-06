@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\GameStatus;
+use App\Models\IngredientClicks;
 use App\Models\Inventories;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -17,25 +19,26 @@ class GameController extends Controller
                 [
                     "balance" => $request->balance,
                     "current_recipe" => $request->current_recipe,
-                    "ingredients_clicks" => $request->ingredients_clicks,
                     "last_crafted_time" => $request->last_crafted_time,
                     "is_collected" => $request->is_collected,
                     'level_point' => $request->level_point
                 ]
             );
-        if ($request->completedRecipe) {
-            $inventory = Inventories::where('user_id', $request->user_id)->first();
-            $currentNumber = $inventory[$request->completedRecipe];
-            $inventory = Inventories::where("user_id", $request->user_id)
-                ->update([$request->completedRecipe => $currentNumber + 1]);
-
-            return response([
-                'gameStatus' => $gameStatus,
-                'inventory' => $inventory
-            ], 200);
+        foreach ($request->ingredients_clicks as $key => $clicks) {
+            IngredientClicks::updateOrCreate(
+                ['user_id'=>$request->user_id, "ingredient_index"=>$key],
+                ['clicks'=>$clicks]
+            );
         }
-        return response([
-            'gameStatus' => $gameStatus,
-        ], 200);
+            # code...
+        if ($request->completedRecipe) {
+            Inventories::updateOrCreate(
+                ['user_id'=>$request->user_id, 'recipe_name'=>$request->completedRecipe],
+                ['count'=>DB::raw('count+1')]
+            );
+        }
+        // return response([
+        //     'gameStatus' => $gameStatus,
+        // ], 200);
     }
 }
