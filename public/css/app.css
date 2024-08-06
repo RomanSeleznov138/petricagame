@@ -372,6 +372,7 @@ span.game-user-balance-text {
 }
 
 .inventoryBody {
+    margin-bottom: 40px;
     display: flex;
     flex-wrap: wrap;
     background-color: #c2d3d3;
@@ -431,6 +432,14 @@ span.game-user-balance-text {
     }
     .game-user-inventory{
         justify-content: left;
+        width: -moz-fit-content;
+        width: fit-content;
+        font-size: 25px;
+    }
+    .game-user-balance{
+        width: -moz-fit-content;
+        width: fit-content;
+        font-size: 25px;
     }
 }
 @media screen and (max-width: 360px) {
@@ -452,7 +461,7 @@ span.game-user-balance-text {
     .invenvtoryElement {
         display: flex;
         background-color: white;
-        height: 40px;
+        height: 60px;
         border: 2px solid;
         border-radius: 10px;
         justify-content: space-between;
@@ -516,5 +525,7 @@ span.game-user-balance-text {
     transition: all 1s ease; /* Duration should match JavaScript */
     pointer-events: none; /* Prevent interaction during animation */
 }
+
+
 
 
