@@ -440,46 +440,12 @@ span.game-user-balance-text {
         font-size: 25px;
     }
 }
-@media screen and (max-width: 360px) {
-    .game-container {
-        padding: 20px;
-    }
-}
 @media screen and (max-width: 400px) {
+    .game-container {
+        padding: 10px;
+    }
     .inventoryBody {
-        display: flex;
-        flex-wrap: wrap;
-        background-color: #c2d3d3;
-        border-radius: 10px;
-        padding: 50px 20px 50px 20px;
-        justify-content: space-between;
-        row-gap: 35px;
-        flex-direction: column;
-    }
-    .invenvtoryElement {
-        display: flex;
-        background-color: white;
-        height: 60px;
-        border: 2px solid;
-        border-radius: 10px;
-        justify-content: space-between;
-        width: 100%;
-    }
-    .inventoryImg img {
-        width: 60%;
-        position: absolute;
-        bottom: 0;
-        margin-left: -5px;
-    }
-    .inventoryInfo {
-        display: flex;
-        flex-flow: column;
-        justify-content: center;
-        width: 50%;
-    }
-    .inventoryImg {
-        width: 50%;
-        position: relative;
+        padding:20px 5px;
     }
   }
 
