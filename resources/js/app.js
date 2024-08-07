@@ -310,6 +310,7 @@ class GameController {
     showWarningTimer;
     time;
     leftTime;
+    total_inventory_count
 
     constructor(data, rootElement) {
         this.rootElement = rootElement;
@@ -323,7 +324,7 @@ class GameController {
         this.currentUser = data.currentUser;
         this.balance = data.balance;
         this.levelPoint = data.levelPoint;
-
+        this.total_inventory_count = 0;
         this.initGame();
     }
 
@@ -344,17 +345,26 @@ class GameController {
             .css("width", `${userLevel.currentPercent}%`);
 
         this.rootElement.find(".game-user-balance-text").text(this.balance);
-
+        recipes.forEach((inventory, index) => {
+            let currentRecipe = this.inventory.find((recipe) => recipe.recipe_name === inventory.name)
+            if (currentRecipe)
+                this.total_inventory_count += currentRecipe.count;
+        });
+        this.rootElement.find(".game-user-inventory-total-count").text(this.total_inventory_count);
         let currentRecipe = recipes.find(
             (e) => e.name == this.currentRecipe.name
         );
         currentRecipe.ingredients.forEach((ingredient, index) => {
+            let color = "white";
             if (
                 typeof this.currentRecipe.ingredientsClicks[index] ==
                 "undefined"
             ) {
                 this.currentRecipe.ingredientsClicks[index] = 0;
             }
+            if (this.currentRecipe.ingredientsClicks[index] == 0)
+                color = "#505251";
+
             let currentIngredient = ingredients.find(
                 (e) => e.name == ingredient
             );
@@ -366,20 +376,17 @@ class GameController {
             this.rootElement
                 .find(".game-ingredient-item")
                 .eq(index)
-                .find(".game-ingredient-item-title")
-                .text(ingredient);
-            this.rootElement
-                .find(".game-ingredient-item")
-                .eq(index)
                 .find(".game-ingredient-item-level-percent")
                 .css(
                     "width",
-                    `${
-                        this.currentRecipe.ingredientsClicks[index]
-                            ? this.currentRecipe.ingredientsClicks[index]
-                            : 0
-                    }%`
+                    `${this.currentRecipe.ingredientsClicks[index]}%`
                 );
+            this.rootElement
+                .find(".game-ingredient-item")
+                .eq(index)
+                .find(".game-ingredient-item-percent")
+                .text(`${this.currentRecipe.ingredientsClicks[index]}%`)
+                .css("color", `${color}`);
         });
 
         this.randomIngredient = this.getRandomIngredients();
@@ -613,7 +620,7 @@ class GameController {
             success: function (resp) {},
         });
 
-        // this.initGame();
+        this.initGame();
     }
     showInventory() {
         recipes.forEach((inventory, index) => {
@@ -628,20 +635,21 @@ class GameController {
                 .find(".inventoryInfo")
                 .find(".invenvtoryTitle")
                 .text(inventory.name);
-            if (this.inventory[index])
+            let currentRecipe = this.inventory.find((recipe) => recipe.recipe_name === inventory.name)
+            if (currentRecipe)
                 this.rootElement
                     .find(".invenvtoryElement")
                     .eq(index)
                     .find(".inventoryInfo")
                     .find(".invenvtoryNumber")
-                    .text("×" + this.inventory[index].count);
+                    .text("×" + currentRecipe.count);
         });
         this.rootElement.find("#GameTab").css("display", "none");
         this.rootElement.find("#InventoryTab").css("display", "block");
     }
     showHome() {
         this.rootElement.find("#InventoryTab").css("display", "none");
-        this.rootElement.find("#GameTab").css("display", "block");
+        this.rootElement.find("#GameTab").css("display", "flex");
     }
     checkRefreshValidate() {
         let notClickable = true;
@@ -786,15 +794,17 @@ class GameController {
 
         const divRect = div.getBoundingClientRect();
         console.log(divRect);
-        
+
         numberElement.style.position = "absolute"; // Ensure the position is absolute
         numberElement.style.left = `${divRect.left + divRect.width / 2}px`;
         numberElement.style.top = `${divRect.top}px`;
 
-        numberElement.offsetHeight; 
+        numberElement.offsetHeight;
 
         setTimeout(() => {
-            numberElement.style.left = `${divRect.left + divRect.width / 2+10}px`;
+            numberElement.style.left = `${
+                divRect.left + divRect.width / 2 + 10
+            }px`;
             numberElement.style.top = `${divRect.top - 100}px`; // Move 100px up
             numberElement.style.opacity = "0";
             numberElement.style.fontSize = "10px";
@@ -802,7 +812,7 @@ class GameController {
 
         setTimeout(() => {
             numberElement.remove();
-        }, 1000); 
+        }, 1000);
     }
     refreshTabIngredients() {
         this.randomIngredient = this.getRandomIngredients();
@@ -842,9 +852,9 @@ class GameController {
             (e) => e.name == this.currentRecipe.name
         );
         currentRecipe.ingredients.forEach((ingredient, index) => {
-            let currentIngredient = ingredients.find(
-                (e) => e.name == ingredient
-            );
+            let color = "white";
+            if (this.currentRecipe.ingredientsClicks[index] == 0)
+                color = "#505251";
             this.rootElement
                 .find(".game-ingredient-item")
                 .eq(index)
@@ -853,6 +863,12 @@ class GameController {
                     "width",
                     `${this.currentRecipe.ingredientsClicks[index]}%`
                 );
+            this.rootElement
+                .find(".game-ingredient-item")
+                .eq(index)
+                .find(".game-ingredient-item-percent")
+                .text(`${this.currentRecipe.ingredientsClicks[index]}%`)
+                .css("color", `${color}`);
         });
     }
 

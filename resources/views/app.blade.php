@@ -24,75 +24,87 @@
 
 <body class="antialiased">
     <div class="game-container">
-        <div class="game-user-profile">
-            <div class="game-user-profile-avatar">
-                <img src="" alt="">
-            </div>
-            <div class="game-user-profile-body">
-                <div class="game-user-profile-body-title">Welcome Back.</div>
-                <div class="game-user-profile-body-username">Elbowbeard</div>
+        <div class="header">
+            <div class="game-user-profile">
+                <div class="profile-info">
+                    <div class="game-user-profile-avatar">
+                        <img src="" alt="">
+                    </div>
+                    <div class="game-user-profile-body">
+                        <div class="game-user-profile-body-username">Elbowbeard</div>
+                        <div class="game-user-profile-body-level-description">Level <span
+                                class="game-user-profile-body-level-description-level">1</span>
+                            <span class="levelTotalNumber">/10 </span>-
+                            <span class="game-user-profile-body-level-description-name">Novice</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="game-user-profile-body-level-wrapper">
                     <div class="game-user-profile-body-level-percent"></div>
                 </div>
-                <div class="game-user-profile-body-level-description">Level <span
-                        class="game-user-profile-body-level-description-level">1</span>/10, <span
-                        class="game-user-profile-body-level-description-name">Novice</span></div>
+            </div>
+            <div class="game-user-inventory">
+                <div class="game-user-inventory-image">
+                    <img src="images/chest.png" alt="">
+                </div>
+                <div class="game-user-inventory-total-count">0</div>
+                <div class="game-user-inventory-arrow">
+                    <img src="images/angle-right.png" alt="">
+                </div>
             </div>
         </div>
         <div class="tabs">
             <div class="tab" id="GameTab">
-                <div class="game-second-row">
-                    <div class="game-user-balance">
-                        <img src="images/coin.png" alt="" class="game-user-balance-coin">
-                        <span class="game-user-balance-text">0</span>
-                    </div>
-                    <div class="game-user-inventory">Inventory</div>
+                <div class="game-user-balance">
+                    <img src="images/coin.png" alt="" class="game-user-balance-coin">
+                    <span class="game-user-balance-text">0</span>
                 </div>
+
                 <div class="game-ingredients">
                     <div class="game-ingredient-item">
                         <div class="game-ingredient-item-image">
                             <img src="" alt="">
                         </div>
-                        <div class="game-ingredient-item-title">Test Title</div>
                         <div class="game-ingredient-item-level">
                             <div class="game-ingredient-item-level-percent"></div>
                         </div>
+                        <div class="game-ingredient-item-percent">%</div>
                     </div>
                     <div class="game-ingredient-item">
                         <div class="game-ingredient-item-image">
                             <img src="" alt="">
                         </div>
-                        <div class="game-ingredient-item-title">Test Title</div>
                         <div class="game-ingredient-item-level">
                             <div class="game-ingredient-item-level-percent"></div>
                         </div>
+                        <div class="game-ingredient-item-percent">%</div>
                     </div>
                     <div class="game-ingredient-item">
                         <div class="game-ingredient-item-image">
                             <img src="" alt="">
                         </div>
-                        <div class="game-ingredient-item-title">Test Title</div>
                         <div class="game-ingredient-item-level">
                             <div class="game-ingredient-item-level-percent"></div>
                         </div>
+                        <div class="game-ingredient-item-percent">%</div>
                     </div>
                     <div class="game-ingredient-item">
                         <div class="game-ingredient-item-image">
                             <img src="" alt="">
                         </div>
-                        <div class="game-ingredient-item-title">Test Title</div>
                         <div class="game-ingredient-item-level">
                             <div class="game-ingredient-item-level-percent"></div>
                         </div>
+                        <div class="game-ingredient-item-percent">%</div>
                     </div>
                     <div class="game-ingredient-item">
                         <div class="game-ingredient-item-image">
                             <img src="" alt="">
                         </div>
-                        <div class="game-ingredient-item-title">Test Title</div>
                         <div class="game-ingredient-item-level">
                             <div class="game-ingredient-item-level-percent"></div>
                         </div>
+                        <div class="game-ingredient-item-percent">%</div>
                     </div>
                 </div>
                 <div class="game-tap-wrapper">
@@ -227,25 +239,37 @@
                     </div>
                 </div>
             </div>
+            <div class="game-footer">
+                <div class="footer-body">
+                    <div class="game-footer-nav active">
+                        <img src="images/earn1.png" alt="" class="image-active">
+                        <img src="images/earn2.png" alt="" class="image-deactive">
+                        <div class="title">Earn</div>
+                    </div>
+                    <div class="game-footer-nav">
+                        <img src="images/tasks1.png" alt="" class="image-active">
+                        <img src="images/tasks2.png" alt="" class="image-deactive">
+                        <div class="title">Tasks</div>
+                    </div>
+                    <div class="game-footer-nav">
+                        <img src="images/friends1.png" alt="" class="image-active">
+                        <img src="images/friends2.png" alt="" class="image-deactive">
+                        <div class="title">Friends</div>
+                    </div>
+                    <div class="game-footer-nav">
+                        <img src="images/heroes1.png" alt="" class="image-active">
+                        <img src="images/heroes2.png" alt="" class="image-deactive">
+                        <div class="title">Heroes</div>
+                    </div>
+                    <div class="game-footer-nav">
+                        <img src="images/airdrop1.png" alt="" class="image-active">
+                        <img src="images/airdrop2.png" alt="" class="image-deactive">
+                        <div class="title">Airdrop</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="game-footer">
-            <div class="game-footer-nav active">
-                <img src="images/icons.png" alt="" class="image-active">
-                <img src="images/icons2.png" alt="" class="image-deactive">
-            </div>
-            <div class="game-footer-nav">
-                <img src="images/icons3.png" alt="" class="image-active">
-                <img src="images/icons4.png" alt="" class="image-deactive">
-            </div>
-            <div class="game-footer-nav">
-                <img src="images/icons5.png" alt="" class="image-active">
-                <img src="images/icons6.png" alt="" class="image-deactive">
-            </div>
-            <div class="game-footer-nav">
-                <img src="images/icons7.png" alt="" class="image-active">
-                <img src="images/icons8.png" alt="" class="image-deactive">
-            </div>
-        </div>
+
         <div class="loader"></div>
     </div>
 </body>
@@ -253,6 +277,7 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+    Telegram.WebApp.headerColor = "red"
     Telegram.WebApp.ready();
     let telegramUser = [];
     if (window.location.host == "localhost:8000") {

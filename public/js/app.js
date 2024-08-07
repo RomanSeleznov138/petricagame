@@ -200,6 +200,7 @@ var GameController = /*#__PURE__*/function () {
     _defineProperty(this, "showWarningTimer", void 0);
     _defineProperty(this, "time", void 0);
     _defineProperty(this, "leftTime", void 0);
+    _defineProperty(this, "total_inventory_count", void 0);
     this.rootElement = rootElement;
     this.time = 30;
     this.leftTime = -1;
@@ -211,6 +212,7 @@ var GameController = /*#__PURE__*/function () {
     this.currentUser = data.currentUser;
     this.balance = data.balance;
     this.levelPoint = data.levelPoint;
+    this.total_inventory_count = 0;
     this.initGame();
   }
   return _createClass(GameController, [{
@@ -224,19 +226,28 @@ var GameController = /*#__PURE__*/function () {
       this.rootElement.find(".game-user-profile-body-level-description-name").text(levelName[userLevel.level - 1]);
       this.rootElement.find(".game-user-profile-body-level-percent").css("width", "".concat(userLevel.currentPercent, "%"));
       this.rootElement.find(".game-user-balance-text").text(this.balance);
+      recipes.forEach(function (inventory, index) {
+        var currentRecipe = _this.inventory.find(function (recipe) {
+          return recipe.recipe_name === inventory.name;
+        });
+        if (currentRecipe) _this.total_inventory_count += currentRecipe.count;
+      });
+      this.rootElement.find(".game-user-inventory-total-count").text(this.total_inventory_count);
       var currentRecipe = recipes.find(function (e) {
         return e.name == _this.currentRecipe.name;
       });
       currentRecipe.ingredients.forEach(function (ingredient, index) {
+        var color = "white";
         if (typeof _this.currentRecipe.ingredientsClicks[index] == "undefined") {
           _this.currentRecipe.ingredientsClicks[index] = 0;
         }
+        if (_this.currentRecipe.ingredientsClicks[index] == 0) color = "#505251";
         var currentIngredient = ingredients.find(function (e) {
           return e.name == ingredient;
         });
         _this.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-image img").attr("src", "images/" + currentIngredient.image);
-        _this.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-title").text(ingredient);
-        _this.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-level-percent").css("width", "".concat(_this.currentRecipe.ingredientsClicks[index] ? _this.currentRecipe.ingredientsClicks[index] : 0, "%"));
+        _this.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-level-percent").css("width", "".concat(_this.currentRecipe.ingredientsClicks[index], "%"));
+        _this.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-percent").text("".concat(_this.currentRecipe.ingredientsClicks[index], "%")).css("color", "".concat(color));
       });
       this.randomIngredient = this.getRandomIngredients();
       this.randomIngredient.forEach(function (ingredient, index) {
@@ -428,8 +439,7 @@ var GameController = /*#__PURE__*/function () {
         data: data,
         success: function success(resp) {}
       });
-
-      // this.initGame();
+      this.initGame();
     }
   }, {
     key: "showInventory",
@@ -438,7 +448,10 @@ var GameController = /*#__PURE__*/function () {
       recipes.forEach(function (inventory, index) {
         _this5.rootElement.find(".invenvtoryElement").eq(index).find(".inventoryImg img").attr("src", "images/" + inventory.image);
         _this5.rootElement.find(".invenvtoryElement").eq(index).find(".inventoryInfo").find(".invenvtoryTitle").text(inventory.name);
-        if (_this5.inventory[index]) _this5.rootElement.find(".invenvtoryElement").eq(index).find(".inventoryInfo").find(".invenvtoryNumber").text("×" + _this5.inventory[index].count);
+        var currentRecipe = _this5.inventory.find(function (recipe) {
+          return recipe.recipe_name === inventory.name;
+        });
+        if (currentRecipe) _this5.rootElement.find(".invenvtoryElement").eq(index).find(".inventoryInfo").find(".invenvtoryNumber").text("×" + currentRecipe.count);
       });
       this.rootElement.find("#GameTab").css("display", "none");
       this.rootElement.find("#InventoryTab").css("display", "block");
@@ -447,7 +460,7 @@ var GameController = /*#__PURE__*/function () {
     key: "showHome",
     value: function showHome() {
       this.rootElement.find("#InventoryTab").css("display", "none");
-      this.rootElement.find("#GameTab").css("display", "block");
+      this.rootElement.find("#GameTab").css("display", "flex");
     }
   }, {
     key: "checkRefreshValidate",
@@ -593,10 +606,10 @@ var GameController = /*#__PURE__*/function () {
         return e.name == _this10.currentRecipe.name;
       });
       currentRecipe.ingredients.forEach(function (ingredient, index) {
-        var currentIngredient = ingredients.find(function (e) {
-          return e.name == ingredient;
-        });
+        var color = "white";
+        if (_this10.currentRecipe.ingredientsClicks[index] == 0) color = "#505251";
         _this10.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-level-percent").css("width", "".concat(_this10.currentRecipe.ingredientsClicks[index], "%"));
+        _this10.rootElement.find(".game-ingredient-item").eq(index).find(".game-ingredient-item-percent").text("".concat(_this10.currentRecipe.ingredientsClicks[index], "%")).css("color", "".concat(color));
       });
     }
   }, {
