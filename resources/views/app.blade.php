@@ -277,7 +277,6 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    Telegram.WebApp.headerColor = "red"
     Telegram.WebApp.ready();
     let telegramUser = [];
     if (window.location.host == "localhost:8000") {
