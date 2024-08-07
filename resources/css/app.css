@@ -84,7 +84,7 @@ m {
 }
 
 .game-user-balance {
-    height: 56px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -562,5 +562,6 @@ span.levelTotalNumber {
     font-weight: 700;
     color: white;
 }
+
 
 
