@@ -32,8 +32,7 @@
                     </div>
                     <div class="game-user-profile-body">
                         <div class="game-user-profile-body-username">Elbowbeard</div>
-                        <div class="game-user-profile-body-level-description">Level <span
-                                class="game-user-profile-body-level-description-level">1</span>
+                        <div class="game-user-profile-body-level-description">Level <span class="game-user-profile-body-level-description-level">1</span>
                             <span class="levelTotalNumber">/10 </span>-
                             <span class="game-user-profile-body-level-description-name">Novice</span>
                         </div>
@@ -108,37 +107,50 @@
                     </div>
                 </div>
                 <div class="game-tap-wrapper">
-                    <div class="warning"></div>
-                    <div class="game-tap-description">
-                        <div class="refreshTimer"></div>
+                    <div class="play-game">
+                        <div class="warning"></div>
+                        <div class="game-tap-description">
+                            <div class="refreshTimer"></div>
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                        <div class="game-tap-element">
+                            <img src="" alt="">
+                        </div>
+                    </div>
+                    <div class="waiting-game">
+                        <div class="waiting-game-body">
+                            <img class="rotatingImage" src="images/craft_aura.png" alt="">
+                            <img class="port" src="images/craft_jar.png" alt="">
+                        </div>
                         <div class="waitingTimer"></div>
-                        <div class="game-tap-craft-button">CRAFT</div>
-                        <div class="game-tap-collect-button">Collect</div>
+                        <div class="game-tap-craft-button">
+                            <img src="images/craft_button.png" alt="">
+                        </div>
+                        <div class="game-tap-collect-button">
+                            <img src="images/craft_collect.png" alt="">
+                        </div>
                     </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
-                    <div class="game-tap-element">
-                        <img src="" alt="">
-                    </div>
+
                 </div>
             </div>
             <div class="tab" id="InventoryTab" hidden>
@@ -288,8 +300,7 @@
             "language_code": "en",
             "allows_write_to_pm": true
         }
-    }
-    else {
+    } else {
         const tgWebApp = window.Telegram?.WebApp;
         telegramUser = tgWebApp?.initDataUnsafe?.user;
     }
@@ -297,7 +308,7 @@
     var gameController;
     var baseUrl = window.location.origin;
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         initUser();
     })
 
@@ -306,7 +317,7 @@
             url: `${baseUrl}/api/init-user`,
             type: "post",
             data: telegramUser,
-            success: function (resp) {
+            success: function(resp) {
                 var gameData = {
                     balance: resp.gameStatus.balance,
                     levelPoint: resp.gameStatus.level_point,

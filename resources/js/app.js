@@ -296,6 +296,7 @@ var levelName = [
 
 const baseUrl = window.location.origin; // Gets the current origin (scheme + hostname + port)
 class GameController {
+    angle;
     rootElement;
     clickTabCount;
     balance = 0;
@@ -306,13 +307,15 @@ class GameController {
     currentUser;
     randomIngredient;
     intervalTimerFuntion;
+    rotationInterval;
     sendDataTimeout;
     showWarningTimer;
     time;
     leftTime;
-    total_inventory_count
+    total_inventory_count;
 
     constructor(data, rootElement) {
+        this.angle = 0;
         this.rootElement = rootElement;
         this.time = 30;
         this.leftTime = -1;
@@ -329,6 +332,12 @@ class GameController {
     }
 
     initGame() {
+        this.rootElement.find(".game-ingredients").css("display", "flex");
+        this.rootElement.find(".play-game").css("display", "flex");
+        this.rootElement.find(".waiting-game").css("display", "none");
+        this.rootElement.find(".waiting-game").css("margin-top", "");
+        this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+        
         this.leftTimeToPlay();
         this.rootElement
             .find(".game-user-profile-body-username")
@@ -346,11 +355,15 @@ class GameController {
 
         this.rootElement.find(".game-user-balance-text").text(this.balance);
         recipes.forEach((inventory, index) => {
-            let currentRecipe = this.inventory.find((recipe) => recipe.recipe_name === inventory.name)
+            let currentRecipe = this.inventory.find(
+                (recipe) => recipe.recipe_name === inventory.name
+            );
             if (currentRecipe)
                 this.total_inventory_count += currentRecipe.count;
         });
-        this.rootElement.find(".game-user-inventory-total-count").text(this.total_inventory_count);
+        this.rootElement
+            .find(".game-user-inventory-total-count")
+            .text(this.total_inventory_count);
         let currentRecipe = recipes.find(
             (e) => e.name == this.currentRecipe.name
         );
@@ -414,6 +427,7 @@ class GameController {
                 console.error("Error:", error.message);
             });
         if (this.leftTime < 0) {
+
             if (this.isCollected) {
                 if (this.checkAvailableCraft()) this.showCraftButton();
                 else
@@ -427,6 +441,11 @@ class GameController {
             this.intervalTimerFuntion = setInterval(() => {
                 this.showTimeToPlay(this.leftTime);
             }, 1000);
+            const image = this.rootElement.find(".rotatingImage")[0];
+            this.rotationInterval = setInterval(() => {
+                this.angle += 5; // Rotate 5 degrees per frame
+                image.style.transform = `rotate(${this.angle}deg)`;
+            }, 50); // Update the rotation every 50 milliseconds (20 frames per second)
         }
 
         this.addEventListeners();
@@ -600,6 +619,7 @@ class GameController {
         };
         this.currentRecipe.name = currentRecipe;
         this.isCollected = 1;
+        this.clickTabCount+=1;
         const recipeToUpdate = this.inventory.find(
             (recipe) => recipe.recipe_name === completedRecipe
         );
@@ -620,7 +640,9 @@ class GameController {
             success: function (resp) {},
         });
 
+        clearInterval(this.rotationInterval);
         this.initGame();
+
     }
     showInventory() {
         recipes.forEach((inventory, index) => {
@@ -635,7 +657,9 @@ class GameController {
                 .find(".inventoryInfo")
                 .find(".invenvtoryTitle")
                 .text(inventory.name);
-            let currentRecipe = this.inventory.find((recipe) => recipe.recipe_name === inventory.name)
+            let currentRecipe = this.inventory.find(
+                (recipe) => recipe.recipe_name === inventory.name
+            );
             if (currentRecipe)
                 this.rootElement
                     .find(".invenvtoryElement")
@@ -684,49 +708,44 @@ class GameController {
             )
                 isValid = false;
         });
+        this.clickTabCount=100;
         return isValid;
     }
     showCraftButton() {
+        this.rootElement.find(".play-game").css("display", "none");
+        this.rootElement.find(".waiting-game").css("display", "flex");
+
         this.rootElement
-            .find(".game-tap-description .refreshTimer")
+            .find(".waiting-game .waitingTimer")
             .css("display", "none");
         this.rootElement
-            .find(".game-tap-description .waitingTimer")
+            .find(".waiting-game .game-tap-collect-button")
             .css("display", "none");
         this.rootElement
-            .find(".game-tap-description .game-tap-collect-button")
-            .css("display", "none");
-        this.rootElement
-            .find(".game-tap-description .game-tap-craft-button")
-            .css("display", "block");
+            .find(".waiting-game .game-tap-craft-button")
+            .css("display", "flex");
     }
     showCollectButton() {
+        this.rootElement.find(".play-game").css("display", "none");
+        this.rootElement.find(".game-ingredients").css("display", "none");
+
+        this.rootElement.find(".waiting-game").css("display", "flex");
+        this.rootElement.find(".waiting-game").css("margin-top", "54px");
+        this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+
         this.rootElement
-            .find(".game-tap-description .refreshTimer")
+            .find(".waiting-game .waitingTimer")
             .css("display", "none");
         this.rootElement
-            .find(".game-tap-description .waitingTimer")
-            .css("display", "none");
+            .find(".waiting-game .game-tap-collect-button")
+            .css("display", "flex");
         this.rootElement
-            .find(".game-tap-description .game-tap-craft-button")
+            .find(".waiting-game .game-tap-craft-button")
             .css("display", "none");
-        this.rootElement
-            .find(".game-tap-description .game-tap-collect-button")
-            .css("display", "block");
     }
     showRefreshTimer() {
-        this.rootElement
-            .find(".game-tap-description .refreshTimer")
-            .css("display", "block");
-        this.rootElement
-            .find(".game-tap-description .waitingTimer")
-            .css("display", "none");
-        this.rootElement
-            .find(".game-tap-description .game-tap-craft-button")
-            .css("display", "none");
-        this.rootElement
-            .find(".game-tap-description .game-tap-collect-button")
-            .css("display", "none");
+        this.rootElement.find(".play-game").css("display", "block");
+        this.rootElement.find(".waiting-game").css("display", "none");
         if (this.time >= 10)
             this.rootElement
                 .find(".game-tap-description")
@@ -759,23 +778,28 @@ class GameController {
         const mDisplay = m > 0 ? String(m).padStart(2, "0") : "00";
         const sDisplay = s > 0 ? String(s).padStart(2, "0") : "00";
 
+        this.rootElement.find(".play-game").css("display", "none");
+        this.rootElement.find(".game-ingredients").css("display", "none");
+
+        this.rootElement.find(".waiting-game").css("display", "flex");
+        this.rootElement.find(".waiting-game").css("margin-top", "54px");
+        this.rootElement.find(".waiting-game").css("width", "100%");
+        this.rootElement.find(".game-tap-wrapper").css("width", "80%");
+
         this.rootElement
-            .find(".game-tap-description .refreshTimer")
+            .find(".waiting-game .waitingTimer")
+            .css("display", "flex");
+        this.rootElement
+            .find(".waiting-game .game-tap-collect-button")
             .css("display", "none");
         this.rootElement
-            .find(".game-tap-description .waitingTimer")
-            .css("display", "block");
-        this.rootElement
-            .find(".game-tap-description .game-tap-craft-button")
-            .css("display", "none");
-        this.rootElement
-            .find(".game-tap-description .game-tap-collect-button")
+            .find(".waiting-game .game-tap-craft-button")
             .css("display", "none");
 
         this.rootElement
-            .find(".game-tap-description")
+            .find(".waiting-game")
             .find(".waitingTimer")
-            .text(hDisplay + ":" + mDisplay + ":" + sDisplay);
+            .text(hDisplay + "h:" + mDisplay + "m:" + sDisplay + "s");
 
         this.leftTime--;
         if (this.leftTime < 0) {
@@ -790,22 +814,28 @@ class GameController {
         const numberElement = document.createElement("div");
         numberElement.textContent = "+1";
         numberElement.classList.add("fly-number");
-        document.body.appendChild(numberElement);
 
+        const parentElement = this.rootElement
+            .find(".tabs")
+            .find(".game-tap-wrapper .play-game")[0];
+        const parentElementReact = parentElement.getBoundingClientRect();
         const divRect = div.getBoundingClientRect();
-        console.log(divRect);
-
-        numberElement.style.position = "absolute"; // Ensure the position is absolute
-        numberElement.style.left = `${divRect.left + divRect.width / 2}px`;
-        numberElement.style.top = `${divRect.top}px`;
-
+        numberElement.style.left = `${
+            divRect.left - parentElementReact.left + divRect.width / 2
+        }px`;
+        numberElement.style.top = `${
+            divRect.top - parentElementReact.top + divRect.height / 2 - 50
+        }px`;
+        parentElement.appendChild(numberElement);
         numberElement.offsetHeight;
 
         setTimeout(() => {
             numberElement.style.left = `${
-                divRect.left + divRect.width / 2 + 10
+                divRect.left - parentElementReact.left + divRect.width / 2
             }px`;
-            numberElement.style.top = `${divRect.top - 100}px`; // Move 100px up
+            numberElement.style.top = `${
+                divRect.top - parentElementReact.top + divRect.height / 2 - 150
+            }px`;
             numberElement.style.opacity = "0";
             numberElement.style.fontSize = "10px";
         }, 0);

@@ -186,6 +186,7 @@ var baseUrl = window.location.origin; // Gets the current origin (scheme + hostn
 var GameController = /*#__PURE__*/function () {
   function GameController(data, rootElement) {
     _classCallCheck(this, GameController);
+    _defineProperty(this, "angle", void 0);
     _defineProperty(this, "rootElement", void 0);
     _defineProperty(this, "clickTabCount", void 0);
     _defineProperty(this, "balance", 0);
@@ -196,11 +197,13 @@ var GameController = /*#__PURE__*/function () {
     _defineProperty(this, "currentUser", void 0);
     _defineProperty(this, "randomIngredient", void 0);
     _defineProperty(this, "intervalTimerFuntion", void 0);
+    _defineProperty(this, "rotationInterval", void 0);
     _defineProperty(this, "sendDataTimeout", void 0);
     _defineProperty(this, "showWarningTimer", void 0);
     _defineProperty(this, "time", void 0);
     _defineProperty(this, "leftTime", void 0);
     _defineProperty(this, "total_inventory_count", void 0);
+    this.angle = 0;
     this.rootElement = rootElement;
     this.time = 30;
     this.leftTime = -1;
@@ -219,6 +222,11 @@ var GameController = /*#__PURE__*/function () {
     key: "initGame",
     value: function initGame() {
       var _this = this;
+      this.rootElement.find(".game-ingredients").css("display", "flex");
+      this.rootElement.find(".play-game").css("display", "flex");
+      this.rootElement.find(".waiting-game").css("display", "none");
+      this.rootElement.find(".waiting-game").css("margin-top", "");
+      this.rootElement.find(".game-tap-wrapper").css("width", "100%");
       this.leftTimeToPlay();
       this.rootElement.find(".game-user-profile-body-username").text(this.currentUser.username);
       var userLevel = this.calculateUserLevel(this.levelPoint);
@@ -273,6 +281,11 @@ var GameController = /*#__PURE__*/function () {
         this.intervalTimerFuntion = setInterval(function () {
           _this.showTimeToPlay(_this.leftTime);
         }, 1000);
+        var image = this.rootElement.find(".rotatingImage")[0];
+        this.rotationInterval = setInterval(function () {
+          _this.angle += 5; // Rotate 5 degrees per frame
+          image.style.transform = "rotate(".concat(_this.angle, "deg)");
+        }, 50); // Update the rotation every 50 milliseconds (20 frames per second)
       }
       this.addEventListeners();
       this.checkRefreshValidate();
@@ -422,6 +435,7 @@ var GameController = /*#__PURE__*/function () {
       };
       this.currentRecipe.name = currentRecipe;
       this.isCollected = 1;
+      this.clickTabCount += 1;
       var recipeToUpdate = this.inventory.find(function (recipe) {
         return recipe.recipe_name === completedRecipe;
       });
@@ -439,6 +453,7 @@ var GameController = /*#__PURE__*/function () {
         data: data,
         success: function success(resp) {}
       });
+      clearInterval(this.rotationInterval);
       this.initGame();
     }
   }, {
@@ -491,31 +506,35 @@ var GameController = /*#__PURE__*/function () {
       currentRecipe.ingredients.forEach(function (ingredient, index) {
         if (_this7.currentRecipe.ingredientsClicks[index] < _this7.clickTabCount) isValid = false;
       });
+      this.clickTabCount = 100;
       return isValid;
     }
   }, {
     key: "showCraftButton",
     value: function showCraftButton() {
-      this.rootElement.find(".game-tap-description .refreshTimer").css("display", "none");
-      this.rootElement.find(".game-tap-description .waitingTimer").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "block");
+      this.rootElement.find(".play-game").css("display", "none");
+      this.rootElement.find(".waiting-game").css("display", "flex");
+      this.rootElement.find(".waiting-game .waitingTimer").css("display", "none");
+      this.rootElement.find(".waiting-game .game-tap-collect-button").css("display", "none");
+      this.rootElement.find(".waiting-game .game-tap-craft-button").css("display", "flex");
     }
   }, {
     key: "showCollectButton",
     value: function showCollectButton() {
-      this.rootElement.find(".game-tap-description .refreshTimer").css("display", "none");
-      this.rootElement.find(".game-tap-description .waitingTimer").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "block");
+      this.rootElement.find(".play-game").css("display", "none");
+      this.rootElement.find(".game-ingredients").css("display", "none");
+      this.rootElement.find(".waiting-game").css("display", "flex");
+      this.rootElement.find(".waiting-game").css("margin-top", "54px");
+      this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+      this.rootElement.find(".waiting-game .waitingTimer").css("display", "none");
+      this.rootElement.find(".waiting-game .game-tap-collect-button").css("display", "flex");
+      this.rootElement.find(".waiting-game .game-tap-craft-button").css("display", "none");
     }
   }, {
     key: "showRefreshTimer",
     value: function showRefreshTimer() {
-      this.rootElement.find(".game-tap-description .refreshTimer").css("display", "block");
-      this.rootElement.find(".game-tap-description .waitingTimer").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "none");
+      this.rootElement.find(".play-game").css("display", "block");
+      this.rootElement.find(".waiting-game").css("display", "none");
       if (this.time >= 10) this.rootElement.find(".game-tap-description").find(".refreshTimer").text("00:" + this.time);else this.rootElement.find(".game-tap-description").find(".refreshTimer").text("00:0" + this.time);
       this.time--;
       if (this.time < 0) {
@@ -542,11 +561,16 @@ var GameController = /*#__PURE__*/function () {
       var hDisplay = h > 0 ? String(h).padStart(2, "0") : "00";
       var mDisplay = m > 0 ? String(m).padStart(2, "0") : "00";
       var sDisplay = s > 0 ? String(s).padStart(2, "0") : "00";
-      this.rootElement.find(".game-tap-description .refreshTimer").css("display", "none");
-      this.rootElement.find(".game-tap-description .waitingTimer").css("display", "block");
-      this.rootElement.find(".game-tap-description .game-tap-craft-button").css("display", "none");
-      this.rootElement.find(".game-tap-description .game-tap-collect-button").css("display", "none");
-      this.rootElement.find(".game-tap-description").find(".waitingTimer").text(hDisplay + ":" + mDisplay + ":" + sDisplay);
+      this.rootElement.find(".play-game").css("display", "none");
+      this.rootElement.find(".game-ingredients").css("display", "none");
+      this.rootElement.find(".waiting-game").css("display", "flex");
+      this.rootElement.find(".waiting-game").css("margin-top", "54px");
+      this.rootElement.find(".waiting-game").css("width", "100%");
+      this.rootElement.find(".game-tap-wrapper").css("width", "80%");
+      this.rootElement.find(".waiting-game .waitingTimer").css("display", "flex");
+      this.rootElement.find(".waiting-game .game-tap-collect-button").css("display", "none");
+      this.rootElement.find(".waiting-game .game-tap-craft-button").css("display", "none");
+      this.rootElement.find(".waiting-game").find(".waitingTimer").text(hDisplay + "h:" + mDisplay + "m:" + sDisplay + "s");
       this.leftTime--;
       if (this.leftTime < 0) {
         this.stopIntervalFuntion();
@@ -560,16 +584,16 @@ var GameController = /*#__PURE__*/function () {
       var numberElement = document.createElement("div");
       numberElement.textContent = "+1";
       numberElement.classList.add("fly-number");
-      document.body.appendChild(numberElement);
+      var parentElement = this.rootElement.find(".tabs").find(".game-tap-wrapper .play-game")[0];
+      var parentElementReact = parentElement.getBoundingClientRect();
       var divRect = div.getBoundingClientRect();
-      console.log(divRect);
-      numberElement.style.position = "absolute"; // Ensure the position is absolute
-      numberElement.style.left = "".concat(divRect.left + divRect.width / 2, "px");
-      numberElement.style.top = "".concat(divRect.top, "px");
+      numberElement.style.left = "".concat(divRect.left - parentElementReact.left + divRect.width / 2, "px");
+      numberElement.style.top = "".concat(divRect.top - parentElementReact.top + divRect.height / 2 - 50, "px");
+      parentElement.appendChild(numberElement);
       numberElement.offsetHeight;
       setTimeout(function () {
-        numberElement.style.left = "".concat(divRect.left + divRect.width / 2 + 10, "px");
-        numberElement.style.top = "".concat(divRect.top - 100, "px"); // Move 100px up
+        numberElement.style.left = "".concat(divRect.left - parentElementReact.left + divRect.width / 2, "px");
+        numberElement.style.top = "".concat(divRect.top - parentElementReact.top + divRect.height / 2 - 150, "px");
         numberElement.style.opacity = "0";
         numberElement.style.fontSize = "10px";
       }, 0);
