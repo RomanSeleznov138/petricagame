@@ -647,7 +647,7 @@ class GameController {
         clearInterval(this.rotationInterval);
         this.rootElement.find(".waiting-game").css("display", "none");
         this.rootElement.find(".waiting-game").css("margin-top", "");
-        this.rootElement.find(".game-tap-wrapper").css("width", "60%");
+        this.rootElement.find(".game-tap-wrapper").css("width", "80%");
 
         this.initGame();
     }
