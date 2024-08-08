@@ -222,11 +222,12 @@ var GameController = /*#__PURE__*/function () {
     key: "initGame",
     value: function initGame() {
       var _this = this;
-      this.rootElement.find(".game-ingredients").css("display", "flex");
-      this.rootElement.find(".play-game").css("display", "flex");
-      this.rootElement.find(".waiting-game").css("display", "none");
-      this.rootElement.find(".waiting-game").css("margin-top", "");
-      this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+      // this.rootElement.find(".game-ingredients").css("display", "flex");
+      // this.rootElement.find(".play-game").css("display", "flex");
+      // this.rootElement.find(".waiting-game").css("display", "none");
+      // this.rootElement.find(".waiting-game").css("margin-top", "");
+      // this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+
       this.leftTimeToPlay();
       this.rootElement.find(".game-user-profile-body-username").text(this.currentUser.username);
       var userLevel = this.calculateUserLevel(this.levelPoint);
@@ -288,6 +289,7 @@ var GameController = /*#__PURE__*/function () {
         }, 50); // Update the rotation every 50 milliseconds (20 frames per second)
       }
       this.addEventListeners();
+      this.setFixedChildWidth();
       this.checkRefreshValidate();
     }
   }, {
@@ -302,6 +304,7 @@ var GameController = /*#__PURE__*/function () {
     key: "addEventListeners",
     value: function addEventListeners() {
       var _this2 = this;
+      window.addEventListener("resize", this.setFixedChildWidth);
       this.rootElement.find(".game-tap-element").off("click");
       this.rootElement.find(".game-tap-element").on("click", function (element) {
         _this2.handleTapIngredient($(element.currentTarget).attr("ingredient"));
@@ -335,6 +338,13 @@ var GameController = /*#__PURE__*/function () {
         console.log("Back button clicked");
         _this2.showHome();
       });
+    }
+  }, {
+    key: "setFixedChildWidth",
+    value: function setFixedChildWidth() {
+      var parentWidth = $(".tabs")[0].offsetWidth;
+      $(".game-footer").css("width", "".concat(parentWidth - 40, "px"));
+      $(".game-footer").css("display", "block");
     }
   }, {
     key: "handleTapIngredient",
@@ -397,7 +407,7 @@ var GameController = /*#__PURE__*/function () {
         level_point: this.levelPoint,
         is_collected: 0,
         current_recipe: this.currentRecipe.name,
-        ingredients_clicks: "0,0,0,0,0",
+        ingredients_clicks: [0, 0, 0, 0, 0],
         last_crafted_time: formattedDateTime
       };
       var endpoint = "/api/game-controll";
@@ -454,6 +464,9 @@ var GameController = /*#__PURE__*/function () {
         success: function success(resp) {}
       });
       clearInterval(this.rotationInterval);
+      this.rootElement.find(".waiting-game").css("display", "none");
+      this.rootElement.find(".waiting-game").css("margin-top", "");
+      this.rootElement.find(".game-tap-wrapper").css("width", "60%");
       this.initGame();
     }
   }, {
@@ -514,6 +527,8 @@ var GameController = /*#__PURE__*/function () {
     value: function showCraftButton() {
       this.rootElement.find(".play-game").css("display", "none");
       this.rootElement.find(".waiting-game").css("display", "flex");
+      this.rootElement.find(".game-ingredients").css("display", "flex");
+      this.rootElement.find(".game-ingredients").css("margin-bottom", "0");
       this.rootElement.find(".waiting-game .waitingTimer").css("display", "none");
       this.rootElement.find(".waiting-game .game-tap-collect-button").css("display", "none");
       this.rootElement.find(".waiting-game .game-tap-craft-button").css("display", "flex");
@@ -521,11 +536,13 @@ var GameController = /*#__PURE__*/function () {
   }, {
     key: "showCollectButton",
     value: function showCollectButton() {
+      clearInterval(this.rotationInterval);
       this.rootElement.find(".play-game").css("display", "none");
       this.rootElement.find(".game-ingredients").css("display", "none");
       this.rootElement.find(".waiting-game").css("display", "flex");
       this.rootElement.find(".waiting-game").css("margin-top", "54px");
-      this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+      // this.rootElement.find(".game-tap-wrapper").css("width", "100%");
+
       this.rootElement.find(".waiting-game .waitingTimer").css("display", "none");
       this.rootElement.find(".waiting-game .game-tap-collect-button").css("display", "flex");
       this.rootElement.find(".waiting-game .game-tap-craft-button").css("display", "none");
@@ -533,8 +550,10 @@ var GameController = /*#__PURE__*/function () {
   }, {
     key: "showRefreshTimer",
     value: function showRefreshTimer() {
-      this.rootElement.find(".play-game").css("display", "block");
+      this.rootElement.find(".game-ingredients").css("display", "flex");
+      this.rootElement.find(".play-game").css("display", "flex");
       this.rootElement.find(".waiting-game").css("display", "none");
+      this.rootElement.find(".game-ingredients").css("margin-bottom", "0");
       if (this.time >= 10) this.rootElement.find(".game-tap-description").find(".refreshTimer").text("00:" + this.time);else this.rootElement.find(".game-tap-description").find(".refreshTimer").text("00:0" + this.time);
       this.time--;
       if (this.time < 0) {
