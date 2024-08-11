@@ -1,4 +1,4 @@
-* {
+m {
     padding: 0px;
     margin: 0px;
     font-family: sans-serif;
@@ -183,7 +183,14 @@ span.game-user-balance-text {
     border-radius: 9999px;
 }
 
-.game-tap-wrapper {width: 60%;display: flex;justify-content: center;align-items: center;flex-direction: column;min-height: 350px;}
+.game-tap-wrapper {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 350px;
+}
 
 .game-tap-description {
     position: absolute;
@@ -490,16 +497,7 @@ div#InventoryTab {
     padding: 20px 25px 10px 20px;
     height: 45px;
 }
-@media screen and (max-width: 320px) {
-    .header {
-        margin-top: 45px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 25px 10px 20px;
-        height: 60px;
-    }
-}
+
 .profile-info {
     display: flex;
     align-items: center;
@@ -547,7 +545,7 @@ span.levelTotalNumber {
 .game-footer-nav.active .title {
     font-size: 11px;
     font-weight: 700;
-    color: #0B2D3C;
+    color: #0b2d3c;
 }
 .game-footer-nav .title {
     font-size: 11px;
@@ -606,11 +604,17 @@ span.levelTotalNumber {
     font-size: 30px;
     font-weight: 700;
 }
-
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 320px) {
+    .header {
+        margin-top: 45px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px 10px 20px;
+        height: 60px;
+    }
     .refreshTimer {
         font-size: 20px;
-        font-weight: 700;
     }
     .game-tap-wrapper {
         width: 60%;
@@ -618,19 +622,6 @@ span.levelTotalNumber {
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        min-height: 220px;
+        min-height: 200px;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
