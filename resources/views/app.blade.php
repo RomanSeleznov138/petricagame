@@ -302,6 +302,7 @@
         }
     } else {
         const tgWebApp = window.Telegram?.WebApp;
+        tgWebApp.setHeaderColor('red');
         telegramUser = tgWebApp?.initDataUnsafe?.user;
     }
 
