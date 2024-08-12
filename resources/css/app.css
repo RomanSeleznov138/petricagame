@@ -1,4 +1,4 @@
-m {
+* {
     padding: 0px;
     margin: 0px;
     font-family: sans-serif;
@@ -483,7 +483,6 @@ div#InventoryTab {
 }
 
 .header {
-    margin-top: 45px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -606,6 +605,7 @@ span.levelTotalNumber {
     font-size: 30px;
     font-weight: 700;
 }
+
 
 
 
