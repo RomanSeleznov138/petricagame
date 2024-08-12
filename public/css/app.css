@@ -1,4 +1,4 @@
-* {
+m {
     padding: 0px;
     margin: 0px;
     font-family: sans-serif;
@@ -9,7 +9,7 @@
     width: 500px;
     box-sizing: border-box;
     margin: auto;
-    max-width: 100vw;
+    max-width: 100%;
     overflow: auto;
     background-image: url(/images/bg.png);
     background-position: top;
@@ -183,14 +183,7 @@ span.game-user-balance-text {
     border-radius: 9999px;
 }
 
-.game-tap-wrapper {
-    width: 60%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    min-height: 350px;
-}
+.game-tap-wrapper {width: 60%;display: flex;justify-content: center;align-items: center;flex-direction: column;min-height: 350px;}
 
 .game-tap-description {
     position: absolute;
@@ -234,7 +227,7 @@ span.game-user-balance-text {
 }
 .game-tap-element {
     position: absolute;
-    width: 25%;
+    width: 56px;
     aspect-ratio: 75 /72;
     max-width: 16vw;
     border-radius: 9999px;
@@ -497,7 +490,16 @@ div#InventoryTab {
     padding: 20px 25px 10px 20px;
     height: 45px;
 }
-
+@media screen and (max-width: 320px) {
+    .header {
+        margin-top: 45px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px 10px 20px;
+        height: 60px;
+    }
+}
 .profile-info {
     display: flex;
     align-items: center;
@@ -545,7 +547,7 @@ span.levelTotalNumber {
 .game-footer-nav.active .title {
     font-size: 11px;
     font-weight: 700;
-    color: #0b2d3c;
+    color: #0B2D3C;
 }
 .game-footer-nav .title {
     font-size: 11px;
@@ -604,24 +606,18 @@ span.levelTotalNumber {
     font-size: 30px;
     font-weight: 700;
 }
-@media screen and (max-width: 320px) {
-    .header {
-        margin-top: 45px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 25px 10px 20px;
-        height: 60px;
-    }
-    .refreshTimer {
-        font-size: 20px;
-    }
-    .game-tap-wrapper {
-        width: 60%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        min-height: 200px;
-    }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
