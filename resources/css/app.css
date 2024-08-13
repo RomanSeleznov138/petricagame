@@ -227,7 +227,7 @@ span.game-user-balance-text {
 }
 .game-tap-element {
     position: absolute;
-    width: 56px;
+    width: 25%;
     aspect-ratio: 75 /72;
     max-width: 16vw;
     border-radius: 9999px;
